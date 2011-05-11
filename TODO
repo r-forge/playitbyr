@@ -4,10 +4,13 @@ The idea here is to create a sonification class, named "sonify". A "sonify" obje
     	      "pitch", duh
 	      "start", like in Gini
 	      "dur", like for inequality
-	      "
+	      "vol"
+	      "timbre"
     $layers: a list with further elements, similar to the overall one
     	     $data: data for each individual layer, overrides default
 	     $mapping: same as top-level mapping, but overrides default
+	     $shape
+	     $stat
     $shape: right now, "notes" for something like musical notes, & the parameters that go with it
     	    	       "percussion" for a percussive sound
 		       "noise" for white, etc. noise (csound/R only)
@@ -16,12 +19,12 @@ The idea here is to create a sonification class, named "sonify". A "sonify" obje
     $stat: "Benford", some kind of aggregation related to 
     $scaling: includes presence of guide tones or beats, also function to scale. 
     	      $length (scaling of start, dur, &c is relative to this.)
-    	      $pitch
-     	      $guide_top: T or F
-	      $gui
+	      all the same possible values...should store this as a separate value, a "global" variable of possible mappings.
+	      Each can have slots for range(can be empty for raw output of function) and scaling function (default linear, then recentered on range either truncated or shrunk to it)
+
     $engine: For right now one of c("csound","R", "MIDI"), maybe one day SuperCollider, Chuck, whatever.
     	     Can include sub parameters specific to that method, e.g. for the craziness of the names plot, real-time
-	     vs. non-real-time, etc.
+	     vs. non-real-time, etc. Should leave in possibility to leave blank and choose method dynamically?
 
 
 Sudden idea for implementation of real-time...allowing R to be a processor on the way of arbitrary data streams. That would be wikkid cool, right?
