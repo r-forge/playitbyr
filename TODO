@@ -1,0 +1,27 @@
+The idea here is to create a sonification class, named "sonify". A "sonify" object is a list containing
+    $data: a default data.frame with the original, unmodified data (all columns)
+    $mapping: a named vector(?) containing default name-value pairs. Can be static values or related to data.frame()
+    	      "pitch", duh
+	      "start", like in Gini
+	      "dur", like for inequality
+	      "
+    $layers: a list with further elements, similar to the overall one
+    	     $data: data for each individual layer, overrides default
+	     $mapping: same as top-level mapping, but overrides default
+    $shape: right now, "notes" for something like musical notes, & the parameters that go with it
+    	    	       "percussion" for a percussive sound
+		       "noise" for white, etc. noise (csound/R only)
+		       "portamento" when there's interpolation (csound only)
+    	    something to cover "tempo" plots? Both 
+    $stat: "Benford", some kind of aggregation related to 
+    $scaling: includes presence of guide tones or beats, also function to scale. 
+    	      $length (scaling of start, dur, &c is relative to this.)
+    	      $pitch
+     	      $guide_top: T or F
+	      $gui
+    $engine: For right now one of c("csound","R", "MIDI"), maybe one day SuperCollider, Chuck, whatever.
+    	     Can include sub parameters specific to that method, e.g. for the craziness of the names plot, real-time
+	     vs. non-real-time, etc.
+
+
+Sudden idea for implementation of real-time...allowing R to be a processor on the way of arbitrary data streams. That would be wikkid cool, right?
