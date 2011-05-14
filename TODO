@@ -1,4 +1,33 @@
 ##################################################
+4:00-6:15
+##################################################
+
+CHECK! Implementation focus: get MIDI going via sonify objects
+
+
+
+##################################################
+6:00-7:30
+##################################################
+
+Paper focus: work on writing up results 
+NOT on references, that can wait for now
+
+##################################################
+8:00-9:30
+##################################################
+
+Web site focus: I don't even know where to start, but start I shall!
+
+
+##################################################
+TO DO FRIDAY MAY 13
+##################################################
+Implement output to MIDI straight
+
+Later: research namespace, if I can't figure out how to deal with it ask R-help or R-dev
+
+##################################################
 TO DO BY SUNDAY MAY 15
 ##################################################
 print method that handles rendering of Benford and autoregression
@@ -15,6 +44,7 @@ PRIO 2
 ##################################################
 
 aes syntax--make so accepts non-strings
+play R renderings using audio package, skip tuneR
 
 ##################################################
 WISH LIST--very theoretical

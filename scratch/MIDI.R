@@ -1,0 +1,148 @@
+## order of operations to get from a sonify object with only one layer to MIDI-rendered sound:
+
+## 1. based on $mapping and $scales, generate a standardized data.frame in
+##    somehing like a CSound score that ANY rendering engine should handle
+## 2. Apply rendering-specific methods to realize the generated score.
+## So let's do this single-layer case in MIDI in the case where pitch is the only relevant
+## parameter. And not worrying about microtones.
+
+df.notes <- function(x) {
+  ## x is a "sonify" object containing a "notes" layer
+  ## This function renders the "notes" shape
+  ## Currently this only handles mappings of pitch, with the other arguments
+  ## to sonaes assumed to be set constants
+
+  if(all(is.na(x$layers))) stop("Cannot render sound without any layers.")
+  if(!x$mapping$pitch %in% names(x$data))
+    stop("'", paste(x$mapping$pitch, "' is not in given data.frame.", sep=""))
+  notes <- data.frame(pitch = x$data[x$mapping$pitch])
+  names(notes) <- "pitch"
+  ## thought...could probably do a clever lapply or somesuch to iterate the following procedure
+  ## over all the parameters
+  notes$pitch <- x$scales$pitch$scaling.function(notes$pitch, x$scales$pitch$min, x$scales$pitch$max)
+  n <- length(notes$pitch)
+
+  ## these are only currently set up to be static
+  notes$start <- (0:(n-1))*x$scales$total.length/n
+  notes$dur <- notes$start[2]/2 ## need to find a more intelligent way of thinking about duration
+  notes$vol <- x$scales$vol
+  notes$timbre <- x$scales$timbre
+  notes
+}
+
+midi <- function(title="R-created Midi", bpm=60){
+  ## Creates empty "midi" object that tracks can be inserted into
+  
+  options(scipen=7) ## avoids writing anything here in scientific notation
+
+  ## Create new data.frame and add headers
+  newdf <- data.frame(matrix(nrow=7,ncol=7))
+  names(newdf) <- c("tracknum", "time", "type","channel", "note", "velocity", "tempoonly")
+  newdf[1,] <- c(0,0, "Header", 1, 1, 480, NA)
+  newdf[2,] <- c(1,0, "Start_track", NA, NA, NA, NA)
+  newdf[3,] <- c(1,0, "Title_t", title, NA, NA, NA)
+  newdf[4,] <- c(1,0, "Time_signature", 4, 2, 24, 8)
+  newdf[5,] <- c(1,0, "Tempo", 60000000/bpm, NA,NA,NA)
+  newdf[6,] <- c(1,0, "End_track", NA, NA, NA, NA)  
+  newdf[7,] <- c(0,0, "End_of_file", NA, NA, NA, NA)
+
+  options(scipen=0) ## reset option
+
+  ## Set class and attributes
+  class(newdf) <- c("midi", "data.frame")
+  attributes(newdf)$istrack <- FALSE
+  attributes(newdf)$percussion <- FALSE
+  attributes(newdf)$maxtrack <- 0
+  attributes(newdf)$maxchannel <- 0
+  newdf
+}
+
+octToMidiNote <- function(oct) {
+  ## This is rounded...evenually it be nice to figure out microtonal
+ round(60+ (oct-8)*12)
+}  
+
+track <- function(df, percussion = FALSE) {
+  beat <- df$start
+  durs <- df$dur
+  notes <- octToMidiNote(df$pitch)
+  veloc <- df$vol * 127
+  program <- df$timbre
+  tracknum <- rep(NA,length(beat))
+  score <- data.frame(tracknum)
+  score$starttime <- beat
+  score$channel <- NA
+  score$note <- notes
+  score$velocity <- veloc
+  score$endtime <- score$starttime+durs
+
+  ## Change times to MIDI quarter note
+  score$starttime <- score$starttime * 480
+  score$endtime <- score$endtime * 480
+
+  ons <- score[,setdiff(names(score), "endtime")]
+  ons$time <- ons$starttime
+  ons$type <- "Note_on_c"
+  ons <- ons[, c("tracknum", "time", "type","channel", "note", "velocity")]
+
+  offs <- score[, setdiff(names(score), "starttime")]
+  offs$time <- offs$endtime
+  offs$type <- "Note_off_c"
+  offs$velocity <- 0
+  offs <- offs[, c("tracknum", "time", "type","channel", "note", "velocity")]
+
+  all <- rbind(ons, offs)
+  all <- all[order(all$time, all$type),]
+  all$tempoonly <- NA
+  
+  begintrack <- c(NA, 0, "Start_track", NA, NA, NA, NA)
+  chooseinstrument <- c(NA, 0, "Program_c", NA, program, NA,NA)
+  endtrack <- c(NA, max(all$time), "End_track", NA, NA, NA, NA)
+  fulltrack <- rbind(begintrack, chooseinstrument, all, endtrack)
+
+  attributes(fulltrack)$istrack <- TRUE
+  attributes(fulltrack)$percussion <- percussion
+  fulltrack
+}
+
+tempo <- function(bpm=120) {
+  class(bpm) <- c("midi", "numeric")
+  attributes(bpm)$istrack <- FALSE
+  bpm
+}
+
+addTrack <- function(midiOld, midiTrack, ...) {
+  if(attributes(midiTrack)$istrack){
+    ## Add a new midi track (first argument) into an existing one (second)
+    ## Channel numbering starts at 11 to avoid any confusion with percussion tracks
+    ## which in MIDI are always channel 10.
+    if(attributes(midiOld)$percussion) {
+      channelnum <- 10
+    } else {
+      channelnum <- attributes(midiOld)$maxchannel + 1
+      tracknum <- attributes(midiOld)$maxtrack + 1
+    }
+    midiOld[1,5] <- as.numeric(midiOld[1,5])+1
+    midiTrack$tracknum <- tracknum
+    midiTrack$channel <- channelnum
+    midiNew <- rbind(midiOld[-nrow(midiOld),], midiTrack, midiOld[nrow(midiOld),])
+    ##
+    class(midiNew) <- c("midi", "data.frame")
+    attributes(midiNew)$istrack <- FALSE
+    attributes(midiNew)$percussion <- FALSE
+    attributes(midiNew)$maxtrack <- attributes(midiOld)$maxchannel + 1
+    attributes(midiNew)$maxchannel <- attributes(midiOld)$maxtrack + 1
+  } else {
+    midiNew <- midiOld
+    midiNew[5,4] <- 60000000/midiTrack
+  }    
+    midiNew
+}
+
+render.midi <- function(x) {
+  outfile <-tempfile()
+  write.table(x, file=paste(outfile,"csv",sep="."), quote=F, sep=",", row.names=F, col.names=F, na="")
+  system(paste("csvmidi", paste(outfile,"csv",sep="."), paste(outfile,"mid",sep=".")))
+  system(paste("timidity",paste(outfile,"mid",sep=".")), wait=FALSE)
+  unlink(outfile)
+}

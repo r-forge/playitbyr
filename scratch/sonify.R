@@ -1,8 +1,8 @@
-sonify <- function(data=NA, mapping=sonaes(), rendering=NA, scales=scale()) {
+sonify <- function(data=NA, mapping=sonaes(), rendering=NA, scales=scaling()) {
   ## This just puts the items in a list
   s <- list(data, mapping, rendering, scales, NA)
   names(s) <- c("data", "mapping", "rendering", "scales", "layers") #Theres' got to be an easier way to do this
-  class(s) <- c("sonify", "list")
+  class(s) <- c(rendering, "sonify", "list")
   s
 }
 
@@ -16,15 +16,30 @@ sonaes <- function(pitch=NA, start=NA, dur=NA, vol=NA, timbre=NA) {
   ##Similar to ggplot2 "aes". In fact, this should BE "aes", so we need some sort
   ##of namespace
   
-  son <- c(pitch, start, dur, vol, timbre)
+  son <- list(pitch, start, dur, vol, timbre)
   names(son) <- c("pitch", "start", "dur", "vol", "timbre")
   class(son) <- c("sonifyAes", "character")
   son
 }
 
-scale <- function(length=10, pitch=NA, start=NA, dur=NA, vol=NA, timbre=NA) {
-  sc <- list(length, pitch, start, dur, vol, timbre)
-  names(sc) <- c("length", "pitch", "start", "dur", "vol", "timbre")
+scaling <- function(total.length=10, pitch=8, start=NA, dur=NA, vol=0.75, timbre=13, stretch.to.length = TRUE) {
+  ##The sonifyScale for a sound parameter is a list with four elements: min, max, polarity, and function
+  ##
+  ##pitch: specified in csound oct notation, with 8.00 as middle C
+  ##start: specified in proportional relation to total length=1 then multiplied, by default
+  ##dur: also specified in proportion to total length=1...some room for improvement here
+  ##vol: specified in relation to loudest sound = 1
+  ##timbre: this argument is rendering-specific; there are different ranges of timbre available for
+  ##        different renderings. For MIDI notes, just the general MIDI specification
+  ##stretch.to.length: ignore "length" argument and treat start, dur as seconds values
+  
+  if(!stretch.to.length) total.length <- start$dur
+  sc <- list(total.length, pitch, start, dur, vol, timbre)
+  sc <- lapply(sc, function(x) {
+               if(length(x) == 3)
+                 names(x) <- c("min", "max", "scaling.function")
+               return(x)})
+  names(sc) <- c("total.length", "pitch", "start", "dur", "vol", "timbre")
   class(sc) <- c("sonifyScale", "list")
   sc
 }
@@ -40,11 +55,26 @@ layer <- function(shape=NA, shape_params=NA, stat=NA, stat_params=NA, data=NA, m
 
 "+.sonify" <- function(x, y) {
   if("sonifyLayer" %in% class(y)) {
-    if(is.na(x$layers)) {
+    if(all(is.na(x$layers))) {
       x$layers <- y
     } else {x$layers <- list(x$layers, y)}
   } else {stop("'+' operator not supported for this operation.")}
   x
+}
+
+print.sonify <- function(x) {
+  ## This currently ONLY works for "MIDI" and for JUST ONE layer!
+  x <- addTrack(midi(), track(df.notes(x)))
+  render.midi(x)
+}
+
+linear.scale <- function(x, min, max) {
+  ## Linearly rescales vector x so that "lower" is the minimum
+  ## and "upper" the maximum
+  
+  nrange <- max-min
+  out <- ((x-min(x))*nrange/(max(x)-min(x)) + nrange/2)
+  out
 }
 
 ## ##################################################
