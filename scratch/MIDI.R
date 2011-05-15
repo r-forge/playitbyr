@@ -6,30 +6,6 @@
 ## So let's do this single-layer case in MIDI in the case where pitch is the only relevant
 ## parameter. And not worrying about microtones.
 
-df.notes <- function(x) {
-  ## x is a "sonify" object containing a "notes" layer
-  ## This function renders the "notes" shape
-  ## Currently this only handles mappings of pitch, with the other arguments
-  ## to sonaes assumed to be set constants
-
-  if(all(is.na(x$layers))) stop("Cannot render sound without any layers.")
-  if(!x$mapping$pitch %in% names(x$data))
-    stop("'", paste(x$mapping$pitch, "' is not in given data.frame.", sep=""))
-  notes <- data.frame(pitch = x$data[x$mapping$pitch])
-  names(notes) <- "pitch"
-  ## thought...could probably do a clever lapply or somesuch to iterate the following procedure
-  ## over all the parameters
-  notes$pitch <- x$scales$pitch$scaling.function(notes$pitch, x$scales$pitch$min, x$scales$pitch$max)
-  n <- length(notes$pitch)
-
-  ## these are only currently set up to be static
-  notes$start <- (0:(n-1))*x$scales$total.length/n
-  notes$dur <- notes$start[2]/2 ## need to find a more intelligent way of thinking about duration
-  notes$vol <- x$scales$vol
-  notes$timbre <- x$scales$timbre
-  notes
-}
-
 midi <- function(title="R-created Midi", bpm=60){
   ## Creates empty "midi" object that tracks can be inserted into
   
@@ -140,9 +116,11 @@ addTrack <- function(midiOld, midiTrack, ...) {
 }
 
 render.midi <- function(x) {
+  x <- addTrack(midi(), track(df.notes(x)))
   outfile <-tempfile()
   write.table(x, file=paste(outfile,"csv",sep="."), quote=F, sep=",", row.names=F, col.names=F, na="")
   system(paste("csvmidi", paste(outfile,"csv",sep="."), paste(outfile,"mid",sep=".")))
   system(paste("timidity",paste(outfile,"mid",sep=".")), wait=FALSE)
   unlink(outfile)
 }
+
