@@ -1,8 +1,8 @@
-sonify <- function(data=NA, mapping=sonaes(), rendering=NA, scales=scaling(total.length=10, pitch=8, tempo=NA, dur=NA, vol=0.75, timbre=13, stretch.to.length = TRUE)) {
+sonify <- function(data=NULL, mapping=sonaes(), rendering=NULL, scales=scaling(total.length=10, pitch=8, tempo=NULL, dur=NULL, vol=0.75, timbre=13, stretch.to.length = TRUE)) {
   ## This just puts the items in a list
   ##TODO: check if dataset names clash with set aesthetics
   
-  s <- list(data, mapping, rendering, scales, list(NA))
+  s <- list(data, mapping, rendering, scales, NULL)
   names(s) <- c("data", "mapping", "rendering", "scales", "layers") #Theres' got to be an easier way to do this
   class(s) <- c(rendering, "sonify", "list")
   s
@@ -14,7 +14,7 @@ sonify <- function(data=NA, mapping=sonaes(), rendering=NA, scales=scaling(total
 
 ##From manual at Csounds.com: the fraction is preceded by a whole number octave index such that 8.00 represents Middle C, 9.00 the C above, etc. Midi note number values range between 0 and 127 (inclusively) with 60 representing Middle C, and are usually whole numbers.
 
-sonaes <- function(pitch=60, tempo=120, dur=1, vol=0.5, timbre=NA) {
+sonaes <- function(pitch=60, tempo=120, dur=1, vol=0.5, timbre=NULL) {
   ##Similar to ggplot2 "aes". In fact, this should BE "aes", so we need some sort
   ##of namespace
 
@@ -27,7 +27,7 @@ sonaes <- function(pitch=60, tempo=120, dur=1, vol=0.5, timbre=NA) {
 }
 
 
-layer <- function(shape=NA, shape_params=NA, stat=NA, stat_params=NA, data=NA, mapping=NA) {
+layer <- function(shape="notes", shape_params=NULL, stat=NULL, stat_params=NULL, data=NULL, mapping=NULL) {
   l <- list(list(shape, shape_params), list(stat, stat_params), data, mapping)
   names(l) <- c("shape", "stat", "data", "mapping")
   names(l$stat) <- c("stat", "stat_params")
@@ -39,13 +39,13 @@ layer <- function(shape=NA, shape_params=NA, stat=NA, stat_params=NA, data=NA, m
 "+.sonify" <- function(x, y) {
   if("sonifyLayer" %in% class(y)) {
     ## adds layer
-    if(all(is.na(x$layers[[1]]))) {
+    if(is.null(x$layers)) {
       x$layers[[1]] <- y
     } else {x$layers <- c(x$layers, list(y))}
   } else if("sonifyScale" %in% class(y)) {
     ## adds to or overrides scale
     for(i in names(x$scales)) {
-      if(!all(is.na(y[[i]]))) x$scales[[i]] <- y[[i]]
+      if(is.null(y[[i]])) x$scales[[i]] <- y[[i]]
     }
   } else {stop("'+' operator not supported for this operation.")}
   x
@@ -65,9 +65,11 @@ print.sonify <- function(x) {
   ##Replace data.frame in x (a sonify object)
   ##with y (data.frame)
   ##If mappings are already set up, the input data.frame should have the
-  ##same names, which we explicitly check:
-  if(!all(x$mapping[!is.na(x$mapping)] %in% names(y)))
-    stop("New data.frame does not match mapping in sonify object")
+  ##same names, which we explicitly should check with sonthing like:
+  ##  if(!all(x$mapping[!is.null(x$mapping)] %in% names(y)))
+  ##    stop("New data.frame does not match mapping in sonify object")
+  ## THe preceding is not quite correct since it doesn't deal with the fact that some
+  ## mappings are set
   x$data <- y
   x
 }
@@ -76,10 +78,8 @@ df.notes <- function(x) {
   ## x is a "sonify" object containing all notes layers
   ## This function renders the "notes" shape
 
-  if(all(is.na(x$layers))) stop("Cannot render sound without any layers.")
-
-
-    
+  if(is.null(x$layers)) stop("Cannot render sound without any layers.")
+  
   allnotes <- list()
 
   for(i in 1:length(x$layers)) {
@@ -92,38 +92,39 @@ df.notes <- function(x) {
     for(j in names(map)) {
       if(map[[j]] %in% names(x$data)) {
         notes[[j]] <- x$scales[[i]]$scaling.function(x$data[[j]], x$scales[[j]]$min, x$scales[[j]]$max)
-      } else notes[[j]] <- 
+      } else {notes[[j]] <- bleh}
       ## 2. generate values for variable
       ##    a. If set, generated that value
       ##    b. If mapped, apply scaling function to data.frame
       ## 3. 
     }
-    if(!x$mapping$pitch %in% names(x$data))
-      stop("'", paste(x$mapping$pitch, "' is not in given data.frame.", sep=""))
-    notes <- data.frame(pitch = x$data[x$mapping$pitch])
-    names(notes) <- "pitch"
-    ## thought...could probably do a clever lapply or somesuch to iterate the following procedure
-    ## over all the parameters
-    notes$pitch <- x$scales$pitch$scaling.function(notes$pitch, x$scales$pitch$min, x$scales$pitch$max)
-    n <- length(notes$pitch)
-
-    ## these are only currently set up to be static
-    notes$tempo <- (0:(n-1))*x$scales$total.length/n
-    notes$dur <- notes$tempo[2]/2 ## need to find a more intelligent way of thinking about duration
-    notes$vol <- x$scales$vol
-    notes$timbre <- x$scales$timbre
-
   }
+  if(!x$mapping$pitch %in% names(x$data))
+    stop("'", paste(x$mapping$pitch, "' is not in given data.frame.", sep=""))
+  notes <- data.frame(pitch = x$data[x$mapping$pitch])
+  names(notes) <- "pitch"
+  ## thought...could probably do a clever lapply or somesuch to iterate the following procedure
+  ## over all the parameters
+  notes$pitch <- x$scales$pitch$scaling.function(notes$pitch, x$scales$pitch$min, x$scales$pitch$max)
+  n <- length(notes$pitch)
+  
+  ## these are only currently set up to be static
+  notes$tempo <- (0:(n-1))*x$scales$total.length/n
+  notes$dur <- notes$tempo[2]/2 ## need to find a more intelligent way of thinking about duration
+  notes$vol <- x$scales$vol
+  notes$timbre <- x$scales$timbre
   notes
 }
 
 getMappings <- function(x, layernum) {
   ## x: a sonify object, returns the current mappings as a named list
   ## 1. assign mapping based on layer, and on default if layer mapping not present
+  if(layernum > length(x$layers)) stop(paste("There is no layer", layernum))
+
   layermap <- x$layers[[layernum]]$mapping
-  if(!all(is.na(layermap))) {
+  if(!is.null(layermap)) {
     for(i in names(layermap)) {
-      if(!all(is.na(layermap[[i]])))
+      if(!is.null(layermap[[i]]))
         x$mapping[[i]] <- layermap[[i]]
     }
   }
@@ -133,7 +134,9 @@ getMappings <- function(x, layernum) {
 getData <- function(x, layernum) {
   ## x: a sonify object, returns the current data as a data.frame
 
-  if(!all(is.na(x$layers[[layernum]]$data))
+  
+  
+}
   
 
 ## ##################################################
