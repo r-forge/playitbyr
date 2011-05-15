@@ -1,4 +1,4 @@
-scaling <- function(pitch = NULL, tempo = NULL, dur = NULL, vol = NULL, timbre = NULL, total.length = NULL) {
+scaling <- function(pitch = NULL, tempo = NULL, dur = NULL, vol = NULL, timbre = NULL) {
   ##
   ##The sonifyScale for a sound parameter is a list with three elements: min, max, and function
   ##
@@ -9,14 +9,15 @@ scaling <- function(pitch = NULL, tempo = NULL, dur = NULL, vol = NULL, timbre =
   ##timbre: this argument is rendering-specific; there are different ranges of timbre available for
   ##        different renderings. For MIDI notes, just the general MIDI specification
 
-  ##TODO: add check for temp vs. total.length
-  if(!stretch.to.length) total.length <- tempo$dur
-  sc <- list(total.length, pitch, tempo, dur, vol, timbre)
+  ##TODO: convenient to have a total.length argument, which I have removed. Maybe this isn't the place for
+  ##it and it would be easier to fit somewhere else... 
+  
+  sc <- list(pitch, tempo, dur, vol, timbre)
   sc <- lapply(sc, function(x) {
                if(length(x) == 3)
                  names(x) <- c("min", "max", "scaling.function")
                return(x)})
-  names(sc) <- c("total.length", "pitch", "tempo", "dur", "vol", "timbre")
+  names(sc) <- c("pitch", "tempo", "dur", "vol", "timbre")
   class(sc) <- c("sonifyScale", "list")
   sc
 }
@@ -25,8 +26,14 @@ linear.scale <- function(x, min, max) {
   ## Linearly rescales vector x so that "lower" is the minimum
   ## and "upper" the maximum
 
-  if(min>max) x <- -x
-  
+  if(min>max) {
+    x <- -x
+    oldmin <- min
+    oldmax <- max
+    min <- oldmax
+    max <- oldmin
+  }
+    
   nrange <- abs(max-min)
   out <- ((x-min(x))*nrange/(max(x)-min(x)) + min)
   out

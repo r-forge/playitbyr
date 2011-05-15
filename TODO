@@ -1,5 +1,5 @@
 ##################################################
-3:30-6
+Tonight, tonight
 ##################################################
 
 Multi-layer to MIDI
@@ -8,29 +8,20 @@ dur and starttime mappings
 Csound single-layer
 Csound multi-layer
 
-audio directly? or even bother?
+Start writing
 
-##################################################
-8:00-10:00
-##################################################
+Namespace issue
 
-Paper focus: work on writing up results 
-NOT on references, that can wait for now
+create package and run R build and cmd on it
 
 
-##################################################
-TO DO FRIDAY MAY 13
-##################################################
-Implement output to MIDI straight
-
-Later: research namespace, if I can't figure out how to deal with it ask R-help or R-dev
 
 ##################################################
 TO DO BY SUNDAY MAY 15
 ##################################################
 print method that handles rendering of Benford and autoregression
 can brainstorm a data structure that contains all possible methods, perhaps by rendering.
-Sort of a decision tree to see how to render, what method to use.
+
 
 
 sonaes: figure out "namespaces" so I can make this actually aes without killing ggplot2
@@ -47,6 +38,6 @@ play R renderings using audio package, skip tuneR
 ##################################################
 WISH LIST--very theoretical
 ##################################################
-
+Sort of a decision tree to see how to render, what method to use, if left blank.
 Sudden idea for implementation of real-time...allowing R to be a processor on the way of arbitrary data streams. That would be wikkid cool, right?
 

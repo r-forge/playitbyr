@@ -81,7 +81,7 @@ track <- function(df, percussion = FALSE) {
   fulltrack
 }
 
-tempo <- function(bpm=120) {
+tempo <- function(bpm=60) {
   class(bpm) <- c("midi", "numeric")
   attributes(bpm)$istrack <- FALSE
   bpm
@@ -116,11 +116,18 @@ addTrack <- function(midiOld, midiTrack, ...) {
 }
 
 render.midi <- function(x) {
-  x <- addTrack(midi(), track(df.notes(x)))
+  df <- df.notes(x)
+  tracklist <- lapply(levels(df$layer), function(x) track(df[df$layer %in% x,]))
+  x <- midi()
+  for(i in 1:length(tracklist))
+    x <- addTrack(x, tracklist[[i]])
   outfile <-tempfile()
   write.table(x, file=paste(outfile,"csv",sep="."), quote=F, sep=",", row.names=F, col.names=F, na="")
   system(paste("csvmidi", paste(outfile,"csv",sep="."), paste(outfile,"mid",sep=".")))
   system(paste("timidity",paste(outfile,"mid",sep=".")), wait=FALSE)
   unlink(outfile)
 }
+
+
+
 
