@@ -5,8 +5,11 @@ x + layer("notes", mapping=sonaes(pitch="Petal.Width", timbre=2, temp="Petal.Len
 
 ## Wow is this syntax verbose. More defaults here will make my paper prettier...
 
+## mapping onto time test:
+sonify(data=iris, sonaes(time="Sepal.Width", pitch = "Sepal.Length", timbre=1, dur=1, vol=0.75), rendering="midi", scales=scaling(pitch=list(3, 9, linear.scale), time=list(0, 5, linear.scale))) + sonlayer("notes")
 
-
+detach("package:ggplot2")
+ggplot(data=iris, aes(x=Sepal.Width, y=Sepal.Length)) + geom_point()
 
 
 ## when mapping is absent for whatever reason, we get the unintuitive error message:

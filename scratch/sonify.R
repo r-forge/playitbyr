@@ -1,8 +1,8 @@
-sonify <- function(data=NULL, mapping=sonaes(pitch=8, tempo=120, dur=1, vol=0.5, timbre=1), rendering="midi", scales=scaling()) {
+sonify <- function(data=NULL, mapping=sonaes(pitch=8, tempo=120, dur=1, vol=0.5, timbre=1, time=NULL), rendering="midi", scales=scaling(), total.length=10) {
   ## This just puts the items in a list
-  
+
   s <- list(data, mapping, rendering, scales, NULL)
-  names(s) <- c("data", "mapping", "rendering", "scales", "layers") #Theres' got to be an easier way to do this
+  names(s) <- c("data", "mapping", "rendering", "scales", "sonlayers") #Theres' got to be an easier way to do this
   class(s) <- c(rendering, "sonify", "list")
   s
 }
@@ -13,32 +13,35 @@ sonify <- function(data=NULL, mapping=sonaes(pitch=8, tempo=120, dur=1, vol=0.5,
 
 ##From manual at Csounds.com: the fraction is preceded by a whole number octave index such that 8.00 represents Middle C, 9.00 the C above, etc. Midi note number values range between 0 and 127 (inclusively) with 60 representing Middle C, and are usually whole numbers.
 
-sonaes <- function(pitch=NULL, tempo=NULL, dur=NULL, vol=NULL, timbre=NULL) {
-  ##Similar to ggplot2 "aes". In fact, this should BE "aes", so we need some sort
+sonaes <- function(pitch=NULL, time=NULL, tempo=NULL, dur=NULL, vol=NULL, timbre=NULL) {
+  ##Similar to ggplot2 "sonaes". In fact, this should BE "sonaes", so we need some sort
   ##of namespace
   
-  son <- list(pitch, tempo, dur, vol, timbre)
-  names(son) <- c("pitch", "tempo", "dur", "vol", "timbre")
-  class(son) <- c("sonifyAes", "character")
+  son <- list(pitch, time, tempo, dur, vol, timbre)
+  names(son) <- c("pitch", "time", "tempo", "dur", "vol", "timbre")
+  class(son) <- c("sonaes", "character")
   son
 }
 
 
-layer <- function(shape="notes", shape_params=NULL, stat=NULL, stat_params=NULL, data=NULL, mapping=NULL) {
+sonlayer <- function(shape="notes", shape_params=NULL, stat=NULL, stat_params=NULL, data=NULL, mapping=NULL) {
   l <- list(list(shape, shape_params), list(stat, stat_params), data, mapping)
   names(l) <- c("shape", "stat", "data", "mapping")
   names(l$stat) <- c("stat", "stat_params")
   names(l$shape) <- c("shape", "shape_params")
-  class(l) <- c("sonifyLayer", "list")
+  class(l) <- c("sonlayer", "list")
   l
 }
 
+shape_notes <- function(...) sonlayer("notes",...)
+  
+
 "+.sonify" <- function(x, y) {
-  if("sonifyLayer" %in% class(y)) {
-    ## adds layer
-    if(is.null(x$layers)) {
-      x$layers[[1]] <- y
-    } else {x$layers <- c(x$layers, list(y))}
+  if("sonlayer" %in% class(y)) {
+    ## adds sonlayer
+    if(is.null(x$sonlayers)) {
+      x$sonlayers[[1]] <- y
+    } else {x$sonlayers <- c(x$sonlayers, list(y))}
   } else if("sonifyScale" %in% class(y)) {
     ## adds to or overrides scale
     for(i in names(x$scales)) {
@@ -51,7 +54,7 @@ layer <- function(shape="notes", shape_params=NULL, stat=NULL, stat_params=NULL,
 render <- function(x) UseMethod("render")
 
 print.sonify <- function(x) {
-  ## This currently ONLY works for "MIDI" and for JUST ONE layer!
+  ## This currently ONLY works for "MIDI" and for JUST ONE sonlayer!
   render(x)
 }
 
@@ -72,64 +75,76 @@ print.sonify <- function(x) {
 }
 
 df.notes <- function(s) {
-  ## s is a "sonify" object containing all notes layers
+  ## s is a "sonify" object containing all notes sonlayers
   ## This function renders the "notes" shape
 
-  if(is.null(s$layers)) stop("Cannot render sound without any layers.")
+  if(is.null(s$sonlayers)) stop("Cannot render sound without any sonlayers.")
 
-  notes <- do.call(rbind, lapply(1:length(s$layers), function(x) getNotes(s, x)))
+  notes <- do.call(rbind, lapply(1:length(s$sonlayers), function(x) getNotes(s, x)))
   notes
 }
 
 
 
 
-getMappings <- function(x, layernum) {
+getMappings <- function(x, sonlayernum) {
   ## x: a sonify object, returns the current mappings as a named list
-  ## 1. assign mapping based on layer, and on default if layer mapping not present
-  if(layernum > length(x$layers)) stop(paste("There is no layer", layernum))
+  ## 1. assign mapping based on sonlayer, and on default if sonlayer mapping not present
+  if(sonlayernum > length(x$sonlayers)) stop(paste("There is no sonlayer", sonlayernum))
 
-  layermap <- x$layers[[layernum]]$mapping
-  if(!is.null(layermap)) {
-    for(i in names(layermap)) {
-      if(!is.null(layermap[[i]]))
-        x$mapping[[i]] <- layermap[[i]]
+  sonlayermap <- x$sonlayers[[sonlayernum]]$mapping
+  if(!is.null(sonlayermap)) {
+    for(i in names(sonlayermap)) {
+      if(!is.null(sonlayermap[[i]]))
+        x$mapping[[i]] <- sonlayermap[[i]]
     }
   }
   return(x$mapping)
 }
 
-getData <- function(x, layernum) {
+getData <- function(x, sonlayernum) {
   ## x: a sonify object, returns the current data as a data.frame
-  if(layernum > length(x$layers)) stop(paste("There is no layer", layernum))
+  if(sonlayernum > length(x$sonlayers)) stop(paste("There is no sonlayer", sonlayernum))
 
-  if(!is.null(x$layers[[layernum]]$data)){
-    return(x$layers[[layernum]]$data)} else {return(x$data)}
+  if(!is.null(x$sonlayers[[sonlayernum]]$data)){
+    return(x$sonlayers[[sonlayernum]]$data)} else {return(x$data)}
 } 
 
 
-getNotes <- function(x, layernum) {
-  ## Create the notes for the given layer into Csound score style format
+getNotes <- function(x, sonlayernum) {
+  ## Create the notes for the given sonlayer into Csound score style format
   n <- nrow(x$data) # for notes shape, every row of df is a note
-  layer <- rep(layernum, n)
-  curnotes <- data.frame(layer)
+  sonlayer <- rep(sonlayernum, n)
+  curnotes <- data.frame(sonlayer)
   
-  map <- getMappings(x, layernum)
-  data <- getData(x, layernum)
+  map <- getMappings(x, sonlayernum)
+  
+  if(is.null(map$tempo)) mapnames <- setdiff(names(map), "tempo")
+  if(is.null(map$time)) mapnames <- setdiff(names(map), "time")
+  
+  data <- getData(x, sonlayernum)
 
-  for(j in names(map)) {
+  for(j in mapnames) {
     if(map[[j]] %in% names(data)) {
 
       ##TODO: some sort of check here before simply assigning variables
       curnotes[[j]] <- x$scales[[j]]$scaling.function(data[[ (map[[j]]) ]], x$scales[[j]]$min, x$scales[[j]]$max)
     } else {curnotes[[j]] <- map[[j]]}
   }
-  curnotes
 
   ## convert tempo data into start times and scale durations in relation to beat
-  beatlength <- 60/curnotes$tempo
-  curnotes$start <- c(0, cumsum(beatlength[-n]))
-  curnotes$dur <- curnotes$dur*beatlength
-  curnotes$layer <- factor(curnotes$layer)
-  curnotes[,c("layer", "start", "dur", "pitch", "vol", "timbre")]
+  if(!is.null(map$tempo)) {
+    beatlength <- 60/curnotes$tempo
+    curnotes$start <- c(0, cumsum(beatlength[-n]))
+    total <- curnotes$start[n]+ beatlength[n]
+
+  } else if(!is.null(map$time)) {
+    curnotes$start <- curnotes$time
+    curnotes <- curnotes[order(curnotes$start),]
+    
+    total <- curnotes$start[n] + mean(curnotes$start[-1] - curnotes$start[-n]) 
+  }
+  curnotes$dur <- curnotes$dur*(total/n)
+  curnotes$sonlayer <- factor(curnotes$sonlayer)
+  curnotes[,c("sonlayer", "start", "dur", "pitch", "vol", "timbre")]
 }

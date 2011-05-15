@@ -1,26 +1,31 @@
-scaling <- function(pitch = NULL, tempo = NULL, dur = NULL, vol = NULL, timbre = NULL) {
+scaling <- function(pitch = NULL, time = NULL, tempo = NULL, dur = NULL, vol = NULL, timbre = NULL) {
   ##
   ##The sonifyScale for a sound parameter is a list with three elements: min, max, and function
   ##
   ##pitch: specified in csound oct notation, with 8.00 as middle C
   ##tempo: specified in proportional relation to total length=1 then multiplied, by default
-  ##dur: also specified in proportion to total length=1...some room for improvement here
+  ##dur: in relation to 1 "beat", where a "beat" is (total length)/nrow(data)  
   ##vol: specified in relation to loudest sound = 1
   ##timbre: this argument is rendering-specific; there are different ranges of timbre available for
   ##        different renderings. For MIDI notes, just the general MIDI specification
 
-  ##TODO: convenient to have a total.length argument, which I have removed. Maybe this isn't the place for
-  ##it and it would be easier to fit somewhere else... 
-  
-  sc <- list(pitch, tempo, dur, vol, timbre)
+  sc <- list(pitch, time, tempo, dur, vol, timbre)
   sc <- lapply(sc, function(x) {
                if(length(x) == 3)
                  names(x) <- c("min", "max", "scaling.function")
                return(x)})
-  names(sc) <- c("pitch", "tempo", "dur", "vol", "timbre")
+  names(sc) <- c("pitch", "time", "tempo", "dur", "vol", "timbre")
   class(sc) <- c("sonifyScale", "list")
   sc
 }
+
+scale_pitch_linear <- function(min, max) scaling(pitch=list(min, max, linear.scale))
+scale_time_linear <- function(min, max) scaling(time=list(min, max, linear.scale))
+scale_tempo_linear <- function(min, max) scaling(tempo=list(min, max, linear.scale))
+scale_dur_linear <- function(min, max) scaling(dur=list(min, max, linear.scale))
+scale_vol_linear <- function(min, max) scaling(pitch=list(min, max, linear.scale))
+
+
 
 linear.scale <- function(x, min, max) {
   ## Linearly rescales vector x so that "lower" is the minimum

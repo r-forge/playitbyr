@@ -117,7 +117,7 @@ addTrack <- function(midiOld, midiTrack, ...) {
 
 render.midi <- function(x) {
   df <- df.notes(x)
-  tracklist <- lapply(levels(df$layer), function(x) track(df[df$layer %in% x,]))
+  tracklist <- lapply(levels(df$sonlayer), function(x) track(df[df$sonlayer %in% x,]))
   x <- midi()
   for(i in 1:length(tracklist))
     x <- addTrack(x, tracklist[[i]])
