@@ -1,16 +1,7 @@
-## Funny!
-
-x <- sonify(data=iris, mapping=sonaes(pitch = "Sepal.Width", timbre=8, dur=0.75, tempo="Sepal.Length", vol=0.75), rendering="midi", scales=scaling(pitch=list(13.5, 3, linear.scale), tempo=list(400, 800, linear.scale)))+ layer("notes")
-x + layer("notes", mapping=sonaes(pitch="Petal.Width", timbre=2, temp="Petal.Length"))
-
-## Wow is this syntax verbose. More defaults here will make my paper prettier...
-
-## mapping onto time test:
-sonify(data=iris, sonaes(time="Sepal.Width", pitch = "Sepal.Length", timbre=1, dur=1, vol=0.75), rendering="midi", scales=scaling(pitch=list(3, 9, linear.scale), time=list(0, 5, linear.scale))) + sonlayer("notes")
-
-detach("package:ggplot2")
-ggplot(data=iris, aes(x=Sepal.Width, y=Sepal.Length)) + geom_point()
-
+source("tclTest.R")
+source("scaling.R")
+source("sonify.R")
+source("MIDI.R")
 
 ## when mapping is absent for whatever reason, we get the unintuitive error message:
 ## 
@@ -18,6 +9,32 @@ ggplot(data=iris, aes(x=Sepal.Width, y=Sepal.Length)) + geom_point()
 
 ## Not putting "scalings" on leads to thi error:
 ## Error: attempt to apply non-function
-
 ## Should throw warning for omitted notes and exclude them before rendering
 ##, and document what the actual range of MIDI is.
+
+
+
+
+
+
+
+##################################################
+## EXAMPLES IN REPORT
+##################################################
+
+##1a
+x <- sonify(data=iris, 
+      sonaes(time="Petal.Width", pitch = "Petal.Length", 
+      dur=3, vol=0.75, timbre="drum"), 
+      rendering="MIDI")
+y <- x + shape_notes() + scale_time_linear(0, 3.5) + scale_pitch_linear(3, 12)
+
+## c##1b
+## x + shape_notes() + scale_time_linear(0, 3.5) + scale_pitch_linear(3, 12)
+
+## ##1c
+## require(ggplot2)
+## ggplot(data=iris, aes(x=Petal.Width, y=Petal.Length)) + geom_point()
+
+## ##Need to create figure!
+

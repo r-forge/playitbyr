@@ -1,4 +1,4 @@
-scaling <- function(pitch = NULL, time = NULL, tempo = NULL, dur = NULL, vol = NULL, timbre = NULL) {
+scaling <- function(pitch = NULL, time = NULL, tempo = NULL, dur = NULL, vol = NULL, pan=NULL, timbre = NULL) {
   ##
   ##The sonifyScale for a sound parameter is a list with three elements: min, max, and function
   ##
@@ -9,12 +9,12 @@ scaling <- function(pitch = NULL, time = NULL, tempo = NULL, dur = NULL, vol = N
   ##timbre: this argument is rendering-specific; there are different ranges of timbre available for
   ##        different renderings. For MIDI notes, just the general MIDI specification
 
-  sc <- list(pitch, time, tempo, dur, vol, timbre)
+  sc <- list(pitch, time, tempo, dur, vol, pan, timbre)
   sc <- lapply(sc, function(x) {
                if(length(x) == 3)
                  names(x) <- c("min", "max", "scaling.function")
                return(x)})
-  names(sc) <- c("pitch", "time", "tempo", "dur", "vol", "timbre")
+  names(sc) <- c("pitch", "time", "tempo", "dur", "vol", "pan", "timbre")
   class(sc) <- c("sonifyScale", "list")
   sc
 }
@@ -23,6 +23,7 @@ scale_pitch_linear <- function(min, max) scaling(pitch=list(min, max, linear.sca
 scale_time_linear <- function(min, max) scaling(time=list(min, max, linear.scale))
 scale_tempo_linear <- function(min, max) scaling(tempo=list(min, max, linear.scale))
 scale_dur_linear <- function(min, max) scaling(dur=list(min, max, linear.scale))
+scale_pan_linear <- function(min, max) scaling(pan=list(min, max, linear.scale))
 scale_vol_linear <- function(min, max) scaling(pitch=list(min, max, linear.scale))
 
 

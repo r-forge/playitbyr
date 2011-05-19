@@ -6,8 +6,8 @@
 ## So let's do this single-layer case in MIDI in the case where pitch is the only relevant
 ## parameter. And not worrying about microtones.
 
-midi <- function(title="R-created Midi", bpm=60){
-  ## Creates empty "midi" object that tracks can be inserted into
+MIDI <- function(title="R-created MIDI", bpm=60){
+  ## Creates empty "MIDI" object that tracks can be inserted into
   
   options(scipen=7) ## avoids writing anything here in scientific notation
 
@@ -25,7 +25,7 @@ midi <- function(title="R-created Midi", bpm=60){
   options(scipen=0) ## reset option
 
   ## Set class and attributes
-  class(newdf) <- c("midi", "data.frame")
+  class(newdf) <- c("MIDI", "data.frame")
   attributes(newdf)$istrack <- FALSE
   attributes(newdf)$percussion <- FALSE
   attributes(newdf)$maxtrack <- 0
@@ -33,7 +33,7 @@ midi <- function(title="R-created Midi", bpm=60){
   newdf
 }
 
-octToMidiNote <- function(oct) {
+octToMIDINote <- function(oct) {
   ## This is rounded...evenually it be nice to figure out microtonal
  round(60+ (oct-8)*12)
 }  
@@ -41,7 +41,7 @@ octToMidiNote <- function(oct) {
 track <- function(df, percussion = FALSE) {
   beat <- df$start
   durs <- df$dur
-  notes <- octToMidiNote(df$pitch)
+  notes <- octToMIDINote(df$pitch)
   veloc <- df$vol * 127
   program <- df$timbre
   tracknum <- rep(NA,length(beat))
@@ -82,43 +82,45 @@ track <- function(df, percussion = FALSE) {
 }
 
 tempo <- function(bpm=60) {
-  class(bpm) <- c("midi", "numeric")
+  class(bpm) <- c("MIDI", "numeric")
   attributes(bpm)$istrack <- FALSE
   bpm
 }
 
-addTrack <- function(midiOld, midiTrack, ...) {
-  if(attributes(midiTrack)$istrack){
-    ## Add a new midi track (first argument) into an existing one (second)
+addTrack <- function(MIDIOld, MIDITrack, ...) {
+  if(attributes(MIDITrack)$istrack){
+    ## Add a new MIDI track (first argument) into an existing one (second)
     ## Channel numbering starts at 11 to avoid any confusion with percussion tracks
     ## which in MIDI are always channel 10.
-    if(attributes(midiOld)$percussion) {
+    if(attributes(MIDIOld)$percussion) {
       channelnum <- 10
     } else {
-      channelnum <- attributes(midiOld)$maxchannel + 1
-      tracknum <- attributes(midiOld)$maxtrack + 1
+      channelnum <- attributes(MIDIOld)$maxchannel + 1
+      tracknum <- attributes(MIDIOld)$maxtrack + 1
     }
-    midiOld[1,5] <- as.numeric(midiOld[1,5])+1
-    midiTrack$tracknum <- tracknum
-    midiTrack$channel <- channelnum
-    midiNew <- rbind(midiOld[-nrow(midiOld),], midiTrack, midiOld[nrow(midiOld),])
+    MIDIOld[1,5] <- as.numeric(MIDIOld[1,5])+1
+    MIDITrack$tracknum <- tracknum
+    MIDITrack$channel <- channelnum
+    MIDINew <- rbind(MIDIOld[-nrow(MIDIOld),], MIDITrack, MIDIOld[nrow(MIDIOld),])
     ##
-    class(midiNew) <- c("midi", "data.frame")
-    attributes(midiNew)$istrack <- FALSE
-    attributes(midiNew)$percussion <- FALSE
-    attributes(midiNew)$maxtrack <- attributes(midiOld)$maxchannel + 1
-    attributes(midiNew)$maxchannel <- attributes(midiOld)$maxtrack + 1
+    class(MIDINew) <- c("MIDI", "data.frame")
+    attributes(MIDINew)$istrack <- FALSE
+    attributes(MIDINew)$percussion <- FALSE
+    attributes(MIDINew)$maxtrack <- attributes(MIDIOld)$maxchannel + 1
+    attributes(MIDINew)$maxchannel <- attributes(MIDIOld)$maxtrack + 1
   } else {
-    midiNew <- midiOld
-    midiNew[5,4] <- 60000000/midiTrack
+    MIDINew <- MIDIOld
+    MIDINew[5,4] <- 60000000/MIDITrack
   }    
-    midiNew
+    MIDINew
 }
 
-render.midi <- function(x) {
+render.MIDI <- function(x) {
+  if(any(sapply(1:length(y$sonlayers), function(x) getMappings(y, x)$pan) != 0.5))
+    warning("Pan parameter not currently supported for MIDI rendering and will be ignored.")
   df <- df.notes(x)
   tracklist <- lapply(levels(df$sonlayer), function(x) track(df[df$sonlayer %in% x,]))
-  x <- midi()
+  x <- MIDI()
   for(i in 1:length(tracklist))
     x <- addTrack(x, tracklist[[i]])
   outfile <-tempfile()
