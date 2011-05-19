@@ -1,19 +1,3 @@
-
-if(is.null(getOption("csound.plain")))
-  ## This snipped taken from Erich Neuwirths GPL Rcsound pacage
-  {
-    options(csound.plain = "-odevaudio -m0")
-    options(csound.debug = "-odevaudio -m15")
-  }
-
-if(is.null(getOption("tclcsound.path")))
-  options(tclcsound.path="/usr/lib/tclcsound/tclcsound.so")
-
-
-.csCompiled <- FALSE
-.csStopped <- TRUE
-
-
 render.csound <- function(x) {
   ##option setting should be made more portable, and moved to a separate file!
   ##.Tcl calls should be changed to (safer) tcl calls and passing of tcl objects
@@ -31,13 +15,18 @@ render.csound <- function(x) {
   .Tcl(paste("load", getOption("tclcsound.path")))
   if(!(.csCompiled)) {
     .Tcl(paste("csCompile", getOption("csound.plain"), orcfile))
-    .csCompiled <- TRUE
+    .csCompiled <<- TRUE
   } else {.Tcl("csRewind")}
 
     sapply(out, .Tcl)
 
     .Tcl("csPlay")
+
+  print("\n ############## \n Note: Csound is still running.\n Type 'csStop()' to stop running Csound. \n")
 }
 
 
-csStop <- function() .Tcl("csStop")
+csStop <- function() {
+  .Tcl("csStop")
+  .csCompiled <<- FALSE
+}

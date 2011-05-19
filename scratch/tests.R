@@ -3,6 +3,8 @@ source("scaling.R")
 source("sonify.R")
 source("MIDI.R")
 
+
+
 ## when mapping is absent for whatever reason, we get the unintuitive error message:
 ## 
 ## Error in if (map[[j]] %in% names(data)) { : argument is of length zero

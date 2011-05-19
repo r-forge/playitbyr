@@ -6,9 +6,26 @@
 ## So let's do this single-layer case in MIDI in the case where pitch is the only relevant
 ## parameter. And not worrying about microtones.
 
+setMIDIPlayer <- function(x) {
+  ## Path to midi Player
+
+  options(MIDI = x)
+
+}
+
+getMIDIPlayer <- function() getOption("MIDI")
+
+setCSVMIDI <- function(x="csvmidi") {
+  ## Path to csvmidi executable
+
+  options(csvmidi = x)
+}
+
+getCSVMIDI <- function() getOption("csvmidi")
+
 MIDI <- function(title="R-created MIDI", bpm=60){
   ## Creates empty "MIDI" object that tracks can be inserted into
-  
+
   options(scipen=7) ## avoids writing anything here in scientific notation
 
   ## Create new data.frame and add headers
@@ -35,7 +52,7 @@ MIDI <- function(title="R-created MIDI", bpm=60){
 
 octToMIDINote <- function(oct) {
   ## This is rounded...evenually it be nice to figure out microtonal
- round(60+ (oct-8)*12)
+  round(60+ (oct-8)*12)
 }  
 
 track <- function(df, percussion = FALSE) {
@@ -70,7 +87,7 @@ track <- function(df, percussion = FALSE) {
   all <- rbind(ons, offs)
   all <- all[order(all$time, all$type),]
   all$tempoonly <- NA
-  
+
   begintrack <- c(NA, 0, "Start_track", NA, NA, NA, NA)
   chooseinstrument <- c(NA, 0, "Program_c", NA, program, NA,NA)
   endtrack <- c(NA, max(all$time), "End_track", NA, NA, NA, NA)
@@ -112,10 +129,12 @@ addTrack <- function(MIDIOld, MIDITrack, ...) {
     MIDINew <- MIDIOld
     MIDINew[5,4] <- 60000000/MIDITrack
   }    
-    MIDINew
+  MIDINew
 }
 
 render.MIDI <- function(x) {
+  if(is.null(getMIDIPlayer())) stop("No MIDI player specified. Please set with getMIDIPlayer().")
+
   if(any(sapply(1:length(y$sonlayers), function(x) getMappings(y, x)$pan) != 0.5))
     warning("Pan parameter not currently supported for MIDI rendering and will be ignored.")
   df <- df.notes(x)
@@ -125,8 +144,8 @@ render.MIDI <- function(x) {
     x <- addTrack(x, tracklist[[i]])
   outfile <-tempfile()
   write.table(x, file=paste(outfile,"csv",sep="."), quote=F, sep=",", row.names=F, col.names=F, na="")
-  system(paste("csvmidi", paste(outfile,"csv",sep="."), paste(outfile,"mid",sep=".")))
-  system(paste("timidity",paste(outfile,"mid",sep=".")), wait=FALSE)
+  system(paste(getCSVMIDI(), paste(outfile,"csv",sep="."), paste(outfile,"mid",sep=".")))
+  system(paste(getMIDIPlayer(),paste(outfile,"mid",sep=".")), wait=FALSE)
   unlink(outfile)
 }
 

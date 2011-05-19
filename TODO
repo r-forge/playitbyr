@@ -1,32 +1,35 @@
 ##################################################
-Tonight, tonight
+THURSDAY MAY 19
 ##################################################
 
-Multi-layer to MIDI
-dur and starttime mappings
-
-Csound single-layer
-Csound multi-layer
-
-Start writing
-
-Namespace issue
+Csound functions (linked to pitch, timbre, etc).
 
 create package and run R build and cmd on it
 
+Create options for sound commands for portabilitiy on Windows?
+
+##################################################
+TO DO BY HUNGARIAN MIDNIGH
+##################################################
+
+ERROR CHECKING
+thought: a single structure or suite of function that can verify input is in the right formats...
+...a suite of "is" commands that check the structures entered. 
+
+documentation
+
+
+
+"stat_benford" may just not happen, or may be exceedingly simple. Isn't it just a transformation of the data prior to plotting? Guess it has standard representations?. I don't really have a sense of what a "stat" is anyway.
+
+web site
 
 
 ##################################################
-TO DO BY SUNDAY MAY 15
+FRIDAY MAY 20, POST HUNGARIAN MIDNIGHT
 ##################################################
-print method that handles rendering of Benford and autoregression
-can brainstorm a data structure that contains all possible methods, perhaps by rendering.
-
-
-
-sonaes: figure out "namespaces" so I can make this actually aes without killing ggplot2
-
-
+Panning MIDI
+How to build and set variables for Tclsound import of shared object/dynamic library
 
 ##################################################
 PRIO 2
@@ -34,7 +37,12 @@ PRIO 2
 
 aes syntax--make so accepts non-strings
 play R renderings using audio package, skip tuneR
+"sonsave" command to save MIDI or score or Wave to a file.
+also need better defaults.
+Make sonify this more abstract, to be more accomodating of arbitrary parameters
 
+
+  
 ##################################################
 WISH LIST--very theoretical
 ##################################################
