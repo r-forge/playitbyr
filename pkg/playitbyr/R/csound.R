@@ -10,12 +10,12 @@ render.csound <- function(x) {
   
   out <- paste("csNote",do.call(paste, sco)) 
 
-  orcfile <- "csound/playitbyrinst.orc"
+  orcfile <- system.file("inst/templates/playitbyrinst.orc", pkg="playitbyr")
 
   .Tcl(paste("load", getOption("tclcsound.path")))
   if(!(.csCompiled)) {
     .Tcl(paste("csCompile", getOption("csound.plain"), orcfile))
-    .csCompiled <<- TRUE
+    .csCompiled <- TRUE
   } else {.Tcl("csRewind")}
 
     sapply(out, .Tcl)
@@ -26,7 +26,4 @@ render.csound <- function(x) {
 }
 
 
-csStop <- function() {
-  .Tcl("csStop")
-  .csCompiled <<- FALSE
-}
+csStop <- function() .Tcl("csStop")
