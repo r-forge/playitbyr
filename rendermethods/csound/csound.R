@@ -7,23 +7,24 @@ render.csound <- function(x) {
   sleeptime <- ceiling(sco$start[nrow(sco)] + sco$dur[nrow(sco)] + 0.5)
 
   sco <- sco[c("inst", setdiff(names(sco), c("sonlayer", "timbre", "inst")))] ## not currently supported here
-  
+
   out <- paste("csNote",do.call(paste, sco)) 
 
-  orcfile <- system.file("inst/templates/playitbyrinst.orc", pkg="playitbyr")
+  orcfile <- "/home/fortis/Sonification/RForge/playitbyr/pkg/playitbyr/inst/templates/playitbyrinst.orc"#system.file("inst/templates/playitbyrinst.orc", pkg="playitbyr")
 
   .Tcl(paste("load", getOption("tclcsound.path")))
   if(!(.csCompiled)) {
     .Tcl(paste("csCompile", getOption("csound.plain"), orcfile))
-    .csCompiled <- TRUE
+    .csCompiled <<- TRUE
   } else {.Tcl("csRewind")}
+  .Tcl("csTable 1 0 4096  10    1")
+  sapply(out, .Tcl)
 
-    sapply(out, .Tcl)
-
-    .Tcl("csPlay")
+  .Tcl("csPlay")
 
   print("\n ############## \n Note: Csound is still running.\n Type 'csStop()' to stop running Csound. \n")
 }
 
 
 csStop <- function() .Tcl("csStop")
+

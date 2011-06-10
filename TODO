@@ -1,51 +1,23 @@
 ##################################################
-THURSDAY MAY 19
+PRIO 1
 ##################################################
-
-Csound functions (linked to pitch, timbre, etc).
-
-create package and run R build and cmd on it
-
-Create options for sound commands for portabilitiy on Windows?
-
-##################################################
-TO DO BY HUNGARIAN MIDNIGH
-##################################################
-
-ERROR CHECKING
-thought: a single structure or suite of function that can verify input is in the right formats...
-...a suite of "is" commands that check the structures entered. 
-
+Package installation
+	--Tclcsound, csound, csvmidi, MIDI player
 documentation
-
-
-
-"stat_benford" may just not happen, or may be exceedingly simple. Isn't it just a transformation of the data prior to plotting? Guess it has standard representations?. I don't really have a sense of what a "stat" is anyway.
-
-web site
-
-
-##################################################
-FRIDAY MAY 20, POST HUNGARIAN MIDNIGHT
-##################################################
-Panning MIDI
-How to build and set variables for Tclsound import of shared object/dynamic library
+play R renderings using audio package, skip tuneR
+error checking
 
 ##################################################
 PRIO 2
 ##################################################
-
-aes syntax--make so accepts non-strings
-play R renderings using audio package, skip tuneR
+web site
 "sonsave" command to save MIDI or score or Wave to a file.
 also need better defaults.
-Make sonify this more abstract, to be more accomodating of arbitrary parameters
-
-
+Panning MIDI
   
 ##################################################
-WISH LIST--very theoretical
+WISH LIST
 ##################################################
 Sort of a decision tree to see how to render, what method to use, if left blank.
-Sudden idea for implementation of real-time...allowing R to be a processor on the way of arbitrary data streams. That would be wikkid cool, right?
+Set up piping mechanism
 
