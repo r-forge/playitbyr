@@ -1,14 +1,29 @@
 <title> playitbyr: Data Through Sound </title>
+<h3> playitbyr: Data Through Sound</h3>
 
-<head> playitbyr: Data Through Sound </head>
+<p> What's your data saying? <code>playitbyr</code> allows you to
+  listen to a data.frame in R by mapping columns onto sonic
+  parameters, creating an auditory graph. Many clever people have
+  developed tools and interfaces for sonification, but there's just
+  not that much out there to sonify straight from a statistics package
+  like R.
 
-<p><br>
-  <code>playitbyr</code> provides a high-level interface from the R
-  command line to map data and statistical summaries to sonic
-  parameters, with its syntax modeled after the popular graphics
-  add-on package <code>ggplot2</code>. The basic package provides
-  audio renderings done in R via the <code>audio</code> package.
+<p>
+  To make sonification easier to learn, the package mimics the syntax
+  of the popular and beautiful <code>ggplot2</code>
+  package. <code>sonify</code> objects, created by
+  the <code>sonify()</code> function, contain both the data to be
+  sonified and the mappings and scalings of the sound
+  parameters. Users can tweak their sonificaiton by adding other
+  mappings, scalings, and data to the mix. The current development
+  version of the package can be installed in R with the command:
+<p>
+<code>install.packages("playitbyr", repos="http://www.r-project.org")</code>
 
-<br>
-<p><a href=
-https://r-forge.r-project.org/projects/playitbyr/>Project Info Page</a>
+<p>
+ A CRAN release will be coming in summer 2011; there are still several
+ outstanding <a href=known-issues.html>issues</a>, including getting the sound players to work more gracefully
+ . <code>playitbyr</code> depends on the audio package for playing and
+ saving sounds.
+
+
