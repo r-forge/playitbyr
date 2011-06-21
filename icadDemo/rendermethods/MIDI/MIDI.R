@@ -1,4 +1,4 @@
-## order of operations to get from a sonify object with only one layer to MIDI-rendered sound:
+# order of operations to get from a sonify object with only one layer to MIDI-rendered sound:
 
 ## 1. based on $mapping and $scales, generate a standardized data.frame in
 ##    somehing like a CSound score that ANY rendering engine should handle
@@ -138,9 +138,9 @@ addTrack <- function(MIDIOld, MIDITrack, ...) {
 render.MIDI <- function(s) {
   if(is.null(getMIDIPlayer())) stop("No MIDI player specified. Please set with setMIDIPlayer().")
 
-  if(any(sapply(1:length(s$sonlayers), function(y) getMappings(s, y)$pan) != 0.5))
+  if(any(sapply(1:length(s$sonlayers), function(y) .getMappings(s, y)$pan) != 0.5))
     warning("Pan parameter not currently supported for MIDI rendering and will be ignored.")
-  df <- df.notes(s)
+  df <- .dfNotes(s)
 
   tracklist <- lapply(levels(df$sonlayer), function(y) track(df[df$sonlayer %in% y,]))
   x <- MIDI()
@@ -150,12 +150,16 @@ render.MIDI <- function(s) {
   outfile <- tempfile()
 
   write.table(x, file=paste(outfile,"csv",sep="."), quote=F, sep=",", row.names=F, col.names=F, na="")
-  system(paste(getCSVMIDI(), paste(outfile,"csv",sep="."), paste(outfile,"mid",sep=".")))
-  system(paste(getMIDIPlayer(),paste(outfile,"mid",sep=".")), wait=TRUE)
+  system(paste("csvmidi",paste(outfile,"csv",sep="."), paste(outfile,"mid",sep=".")))
+  system(paste("timidity",  paste(outfile,"mid",sep="."), "-Ow -o", paste(outfile, "wav", sep=".")), wait=TRUE)
+  system(paste("aplay", paste(outfile, "wav", sep=".")))
+}
 
   unlink(paste(outfile,"csv",sep="."))
   unlink(paste(outfile,"mid",sep="."))
+  unlink(paste(outfile,"wav",sep="."))
 }
 
 
+outfile <- "blah"
 
