@@ -136,11 +136,11 @@ print.sonify <- function(x) {
   data <- .getData(x, sonlayernum)
 
   for(j in mapnames) {
-    if(map[[j]] %in% names(data)) {
+    if(all(map[j] %in% names(data))) {
 
       ##TODO: some sort of check here before simply assigning variables
       curnotes[[j]] <- x$scales[[j]]$scaling.function(data[[ (map[[j]]) ]], x$scales[[j]]$min, x$scales[[j]]$max)
-    } else {curnotes[[j]] <- map[[j]]}
+    } else {curnotes[j] <- map[j]}
   }
 
   ## convert tempo data into start times and scale durations in relation to beat

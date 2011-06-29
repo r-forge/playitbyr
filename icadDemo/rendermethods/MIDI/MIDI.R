@@ -153,7 +153,6 @@ render.MIDI <- function(s) {
   system(paste("csvmidi",paste(outfile,"csv",sep="."), paste(outfile,"mid",sep=".")))
   system(paste("timidity",  paste(outfile,"mid",sep="."), "-Ow -o", paste(outfile, "wav", sep=".")), wait=TRUE)
   system(paste("aplay", paste(outfile, "wav", sep=".")))
-}
 
   unlink(paste(outfile,"csv",sep="."))
   unlink(paste(outfile,"mid",sep="."))
