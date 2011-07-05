@@ -1,6 +1,8 @@
+source("aaa.R")
 source("sonify.R")
 source("scaling.R")
 source("Rrender.R")
+require(audio)
 
 x <- sonify(data=iris, 
       sonaes(time="Petal.Width",
@@ -11,4 +13,5 @@ x <- sonify(data=iris,
 x <- (x + shape_notes() 
    + scale_time_linear(0, 3) 
    + scale_pitch_linear(3, 13))
+
 x
