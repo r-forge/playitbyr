@@ -1,1 +1,0 @@
-This entire project is very much still in the proof-of-concept phase. The original idea was to construct a ggplot2-like syntax to make sonification easy for those familiar with that system. The current implementation is sketchy and only has a few sonification methods implemented.
