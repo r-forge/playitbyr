@@ -8,5 +8,3 @@ x <- (sonify(data=iris,
       + scale_pitch_linear(3, 13))
 
 x
-
-playLastRendering()
