@@ -9,5 +9,3 @@ x <- (sonify(data=iris,
 x
 
 playLastRendering()
-
-setPlayer("aplay")
