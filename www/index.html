@@ -1,58 +1,43 @@
-<title> playitbyr: Data Through Sound </title>
-<h3> playitbyr: Data Through Sound</h3>
+<title>playitbyr: Data Through Sound</title>
+<a tag="Top"></a>
+<table>
+  <tr>
+    <td><a href="index.html" ><img src=playitbyrtiny.jpg title="playitbyr" alt=playitbyr border="5" /></a></td>
+    <td><a href=gettingstarted.html><img src=start.jpg title="Getting Started" alt="Getting Started" border="1" ></a></td>
+    <td><a href=support.html><img src=support.jpg title="Support--Help, Bugs, and Documentation" alt="Support--Help, Bugs, and Documentation" border="1" ></a></td>
+    <td><a href=code.html><img src=code.jpg alt="Source Code" title="Source Code" border="1"></a></td>
+    <td><a href=sonification.html><img src=sonificationtiny.jpg alt="Sonification Resources" title="Sonification Resources" border="1" /></a></td>
+  </tr>
+</table>
+<hr>
+<p>
+  <img src=playitbyr.jpg alt="playitbyr"/><!-- resized to w=743, h=185 in gimp -->
 <p>
 
-<!-- <p> -->
-<!-- <a href="#examples">Examples to Whet Your Ears</a> -->
-
-<p> What's your data saying? <code>playitbyr</code> allows you to
-  listen to a data.frame in R by mapping columns onto sonic
-  parameters, creating an auditory graph. Many clever people have
-  developed tools and interfaces for sonification, but there's just
-  not that much out there to sonify straight from a statistics package
-  like R. (There has been some considerable work done
-  for <a href="http://www.sonification.com.au/sonipy/">Python</a>.)
+<p> What's your data saying? The <code>playitbyr</code> package for
+  the lovely <a href=http://www.r-project.org>R statistics & data
+    environment</a> allows you to listen to a <code>data.frame</code> in
+  R by mapping columns onto sonic parameters, creating an auditory
+  graph. Many clever people have developed tools and interfaces for
+  sonification, but there's just not that much out there to sonify
+  straight from a statistics package. <a href=gettingstarted.html>Here's how to get started.</a>
 <p>
   To make sonification easier to learn, the package mimics the syntax
-  of the popular and beautiful <code>ggplot2</code>
-  package. <code>sonify</code> objects, created by
-  the <code>sonify()</code> function, contain both the data to be
-  sonified and the mappings and scalings of the sound
-  parameters. Users can tweak their sonificaiton by adding other
-  mappings, scalings, and data to the mix. 
+  of the popular and beautiful
+  <a href=http://had.co.nz/ggplot/><code>ggplot2</code></a>
+package. <code>sonify</code> objects, created by
+the <code>sonify()</code> function, contain both the data to be
+sonified and the mappings and scalings of the sound
+parameters. Users can tweak their sonification by adding other
+mappings, scalings, and data to the mix.
 <p>
-  Sonification helps us detect things in data that we would not catch
-  visually and provides a useful new way of interfacing with
-  data. <a href=http://sonification.de>Thomas Herrman</a> provides a
-  good introduction to the field and its applications.
+  This package is at the early stages of learning how to really sing:
+  the only sound available is a sine wave. But we've got plans to add
+  MIDI and <a href=http://www.csounds.com>csound</a> integration to get a
+  wider range of textures and kick-butt communicative
+  firepower. <code>playitbyr</code> depends on and is very grateful to
+  the <code><a href=http://www.rforge.net/audio/>audio</a></code>
+  package for playing and saving its earnest, simple first utterances.
+
 <p>
-  Just as visualization can help us to look at the world and see in
-  new ways, sonification, opens our ears to new varieties of
-  beautiful, annoying, horrifying, and delightful sounds. My blind
-  wanderings in this vast sonic world are charted on my anything-goes blog,
-  <a href=http://statisfactions.wordpress.com/>Statisfactions: The
-  Sounds of Data and Whimsy</a>
-<p>
-<a id="status"></a><h3>Schedule and Implementation</h3>
-<p>
-  I plan to release a bare-bones alpha version in July 2011, and begin
-  expanding from there. My enthusiasm for sonification is rabid but my
-  experience is minimal, so I'm eager for feedback from R users as well
-  as the clever witches and brow-furrowed wizards of the sonification
-  world.
-<p>  
-  There are still several major outstanding issues, including getting
-  the sound players to work more gracefully and improving interfaces
-  to MIDI and csound. <code>playitbyr</code> depends on the audio
-  package for playing and saving sounds generated natively from R; for
-  MIDI, it currently depends on the csvmidi utility; and for more
-  advanced sound synthesis it depends on csound and csound's Tcl
-  interface.
-<p>
-  With cleverness and only a little telepathy, you could probably
-  get <code>playitbyr</code> working on your computer, especially if
-  it's Linux-based. See the
-  <a href=https://r-forge.r-project.org/projects/playitbyr/>R-forge
-  project site</a>, which is set up rather like Sourceforge, for how
-  to download the source code and related info.
-<!-- <a id="examples"></a><h3>Examples to Whet Your Ears</h3> -->
+  <a href=index.html#Top>Back to top<a>

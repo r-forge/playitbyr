@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Play and save the last audio rendering of a 'sonify' object</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="../../R.css">
+</head><body>
+
+<table width="100%" summary="page for playLastRendering {playitbyr}"><tr><td>playLastRendering {playitbyr}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Play and save the last audio rendering of a <code>sonify</code> object</h2>
+
+<h3>Description</h3>
+
+<p>
+Whenever a <code>sonify</code> object is rendered, <code>playitbyr</code> saves an
+<code>audioSample</code> object, <code>.LastRendering</code>, with the audio
+rendering in the user's workspace for later playback or
+manipulation. <code>playLastRendering</code> and <code>saveLastRendering</code>
+are convenience functions to play or save this object, but it can also
+be manipulated via the functions in the <code>audio</code> package.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+playLastRendering()
+saveLastRendering(filename)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>filename</code></td>
+<td>
+A <code>.wav</code> file to save the <code>audioSample</code>
+object to.</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>
+These functions are simply convenience wrappers for
+<code><a href="http://www.rforge.net/doc/packages/audio/play.html">play</a></code> and <code><a href="http://www.rforge.net/doc/packages/audio/wave.html">save.wave</a></code> in the
+<code>audio</code> package.
+</p>
+<p>
+The behavior of <code>playLastRendering()</code> depends on the option
+"audioRendering". If the option is "audio::pr-for-fdsalay",
+<code>playLastRendering()</code> uses the <code>play</code> function from the
+<code>audio</code> package (which does not work well on Linux systems). If
+the option is anything else, <code>playLastRendering()</code> looks for an
+audio player set with <code>setPlayer</code>, renders the <code>audioSample</code>
+to a temporary file, and plays it with the player given by <code><a href="../../playitbyr/help/setPlayer">setPlayer</a></code>.
+</p>
+
+
+<h3>Value</h3>
+
+<p>
+These functions are invoked for their side-effects, which are to play
+or save the <code>.LastRendering</code> <code>audioSample</code> object.</p>
+
+
+<h3>See Also</h3>
+
+<p>
+<code><a href="http://www.rforge.net/doc/packages/audio/audioSample.html">audioSample</a></code>, <code><a href="../../playitbyr/help/setPlayer">setPlayer</a></code>
+</p>
+
+<hr><div align=center>[Package <em>playitbyr</em> version 0.1-1 <a href=00Index.html>Index</a> <a href=../index.html>Web site</a>]</div>

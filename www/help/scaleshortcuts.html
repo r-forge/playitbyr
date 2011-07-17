@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Shortcut functions to set linear scales for 'sonify' objects</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="../../R.css">
+</head><body>
+
+<table width="100%" summary="page for scaleShortcuts {playitbyr}"><tr><td>scaleShortcuts {playitbyr}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Shortcut functions to set linear scales for <code>sonify</code>
+objects</h2>
+
+<h3>Description</h3>
+
+<p>
+</p>
+<p>
+These shortcut functions (with the notation <code>scale_</code><KBD>[data
+  parameter]</KBD><code>_</code><KBD>[scaling function]</KBD>) are intended to be added
+onto a <code>sonify</code> object to specify how <KBD>[data parameter]</KBD> from
+the data (a column of the data) is to be mapped to sonic parameters.
+</p>
+<p>
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+scale_time_linear(min, max)
+scale_pitch_linear(min, max)
+scale_dur_linear(min, max)
+scale_vol_linear(min, max)
+scale_pan_linear(min, max)
+scale_tempo_linear(min, max)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>min</code></td>
+<td>
+The desired minimum value, a <code>numeric</code> of length 1</td></tr>
+<tr valign="top"><td><code>max</code></td>
+<td>
+The desired maximum value, a <code>numeric</code> of length 1</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>
+</p>
+<p>
+The syntax of specifying a full <code>sonify</code> object can be rather
+verbose. Inspired by the <span class="pkg">ggplot2</span> package, <span class="pkg">playitbyr</span>
+provides shortcut functions to make the process easier and more
+intuitive.
+</p>
+<p>
+These functions are intended to be added onto a pre-existing sonify
+object, as shown in the examples.
+</p>
+
+
+<h3>Value</h3>
+
+<p>
+A <code>sonscaling</code> object, to be used in <code>sonify</code> or added onto
+a <code>sonify</code> object.
+</p>
+
+
+<h3>See Also</h3>
+
+<p>
+<code><a href="../../playitbyr/help/sonscaling">sonscaling</a></code> for the full syntax and range of
+possibilities for specifying scaling of <code>sonify</code> objects;
+<code><a href="../../playitbyr/help/linear.scale">linear.scale</a></code> for the pre-defined linear scaling
+function which this incorporates; <code><a href="../../playitbyr/help/%2b.sonify">+.sonify</a></code> for the
+addition onto <code>sonify</code> objects.
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## A verbose way of specifying a sonify object,
+## without using the shortcuts
+x &lt;- sonify(data=iris, 
+     sonaes(Petal.Width, Petal.Length, dur=5, vol=0.75),
+     scales = sonscaling(
+       time = list(min=0, max=3,
+        scaling.function = linear.scale),
+       pitch = list(min=3, max=13,
+        scaling.function = linear.scale)))
+summary(x)
+## Not run: x
+
+## An equivalent and much more compact way, with
+## the shortcut functions
+y &lt;- sonify(iris, sonaes(Petal.Width, Petal.Length, dur=5, vol=0.75))
+y &lt;- y + scale_time_linear(0, 3)
+y &lt;- y + scale_pitch_linear(3, 13)
+summary(y)
+## Not run: y
+
+## You can also change a mapping incrementally.
+## New parameters overwrite old ones, so now
+## the sonification is stretched to 12 seconds
+## long instead of 3, and the pitch is mapped to
+## a much narrower range, the octave below tuning A (440 Hz)
+y &lt;- y + scale_time_linear(0, 12) + scale_pitch_linear(7, 8)
+summary(y)
+## Not run: y
+</pre>
+
+<hr><div align=center>[Package <em>playitbyr</em> version 0.1-1 <a href=00Index.html>Index</a> <a href=../index.html>Web site</a>]</div>

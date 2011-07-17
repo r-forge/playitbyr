@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Get and set the audio player</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="../../R.css">
+</head><body>
+
+<table width="100%" summary="page for getPlayer {playitbyr}"><tr><td>getPlayer {playitbyr}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Get and set the audio player</h2>
+
+<h3>Description</h3>
+
+<p>This allows you to get set the method used to play the result
+of your sonification. These functions are probably only necessary on
+Linux, but work on Linux, OS X, and Windows.</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+getPlayer()
+setPlayer(newPlayer)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>newPlayer</code></td>
+<td>
+A character string; either <code>"audio::play"</code> to
+indicate that you are using the <code>play</code> function from the
+<span class="pkg">audio</span> package, or the path to media (<code>*.wav</code>) file
+player. See Details.</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>
+By default on Windows and OS X, audio is played with the <code>play</code>
+function from the <span class="pkg">audio</span> package. So <code>getPlayer()</code> will
+return <code>"audio::play"</code>.
+</p>
+<p>
+However, <span class="pkg">audio</span>'s <code>play</code> function does not work well on
+Linux&ndash;for instance, it seems to cause segmentation faults&ndash;so the
+default is <a href="http://linux.die.net/man/1/aplay">aplay</a>, which comes
+along with many Linux distributions. If you want to use another player,
+you can use <code>setPlayer()</code> to specify an external wav file
+player. Then, when <code>print</code>-ing a <code>sonify</code> object,
+<span class="pkg">playitbyr</span> will render to a temporary file and then play it using
+<code><a href="http://stat.ethz.ch/R-manual/R-patched/library/base/html/system2.html">system2</a></code>.
+</p>
+<p>
+For external players, I recommend a command-line player to avoid
+having to wait for a GUI to load up.
+</p>
+
+
+<h3>Value</h3>
+
+<p>
+<code>setPlayer()</code> is called for its side effect, to set the option
+for <code>player</code>.
+</p>
+<p>
+<code>getPlayer()</code> returns the option set by <code>setPlayer()</code>.
+</p>
+
+
+<h3>See Also</h3>
+
+<p>
+<code><a href="../../playitbyr/help/print.sonify">print.sonify</a></code>, <code><a href="../../playitbyr/help/playLastRendering">playLastRendering</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Get the current player
+oldPlayer &lt;- getPlayer()
+oldPlayer
+
+## Set the current player to aplay
+setPlayer("aplay")
+getPlayer()
+
+## Reset player to the old setting
+setPlayer(oldPlayer)
+</pre>
+
+
+<hr><div align=center>[Package <em>playitbyr</em> version 0.1-1 <a href=00Index.html>Index</a> <a href=../index.html>Web site</a>]</div>

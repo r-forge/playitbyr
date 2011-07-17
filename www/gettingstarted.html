@@ -1,0 +1,176 @@
+<title>playitbyr: Getting Started</title>
+<a name="Top"></a>
+<table>
+  <tr>
+    <td><a href="index.html" ><img src=playitbyrtiny.jpg title="playitbyr" alt=playitbyr border="1" /></a></td>
+    <td><a href=gettingstarted.html><img src=start.jpg title="Getting Started" alt="Getting Started" border="5" ></a></td>
+    <td><a href=support.html><img src=support.jpg title="Support--Help, Bugs, and Documentation" alt="Support--Help, Bugs, and Documentation" border="1" ></a></td>
+    <td><a href=code.html><img src=code.jpg alt="Source Code" title="Source Code" border="1"></a></td>
+    <td><a href=sonification.html><img src=sonificationtiny.jpg alt="Sonification Resources" title="Sonification Resources" border="1" /></a></td>
+  </tr>
+</table>
+<hr>
+<p>
+  <h1>Getting Started</h1>
+<p>
+  Here are some quick tips to get started making informative and
+  delightful blips and bleeps with <code>playitbyr</a></code>. If
+  you're having trouble and want to request help, report a bug, or
+  browse the documentation, see the <a href=support.html>Support</a>
+  page.
+<p>
+  <h3>Table of Contents</h3>
+  <a href=gettingstarted.html#Installation>Installation</a><br>
+  <a href=gettingstarted.html#Idea>The Basic Idea</a><br>
+  <a href=gettingstarted.html#Tweaking>Tweaking and Interacting with <code>sonify</code> Objects</a>
+<p>
+  <a name="Installation"></a><h3>Installation</h3>
+<p>
+  To get <code>playitbyr</code>, just open R and type:
+<p>
+  <code>install.packages("playitbyr", dep=TRUE, repos="http://r-forge.r-project.org")</code>
+<p>
+  This package has been submitted to
+  <a href=http://cran.r-project.org>CRAN</a> and will be available
+  soon from your favorite CRAN repository, whether it be in Iowa or
+  Indonesia.
+<p>
+  <b>Note for Linux users.</b> Unfortunately,
+  the <code><a href=http://www.rforge.net/audio/>audio</a></code>
+package, which actually plays the sounds created
+by <code>playitbyr</code>, doesn't have strong support
+for Linux. <code>playitbyr</code> therefore by default renders
+sound to a temporary file
+(using <code>audio</code>'s <code>save.wave</code>
+function) and then plays that temporary file
+with <a href="http://oreilly.com/linux/command-directory/cmd.csp?path=a/aplay">aplay</a>. See
+<a href=help/getplayer.html>the help page
+  for <code>setPlayer()</code></a> for more information.
+<p>
+  <a href=gettingstarted.html#Top>Back to top<a>
+      <a name="Idea"></a><h3>The Basic Idea</h3>
+      <p>
+	When you plot a visual graph, you specify what visual
+	parameters you want to represent the parameters in the
+	data. Audio graphs are the same idea, only you specify the
+	sonic parameters instead. In fact, the syntax closely
+	matches that
+	of <a href="http://had.co.nz/ggplot2"><code>ggplot2</code></a>,
+	a popular plotting package.
+      <p>
+	Here's the code for a simple scatterplot
+	in <code>ggplot2</code> of iris measurements:
+      <p>
+	<code>ggplot(iris, aes(x = Petal.Length, y = Petal.Width)) + geom_point()</code>
+      <p>
+	This produces this graph:
+      <p>
+	<img src="ggplot2iris.jpg">
+      <p>
+	Now, here's the code for an audio graph of the same data
+	using <code>playitbyr</code>.  (In response
+	to <code>ggplot2</code>'s functions <code>ggplot()</code>, <code>aes()</code>,
+	and <code>scaling()</code>, <code>playitbyr</code> has
+	analogous functions
+	called <code><a href=help/sonify.html>sonify()</a></code>, 
+	<code><a href=help/sonaes.html>sonaes()</a></code>
+	and <code><a href=help/sonscaling.html>sonscaling()</a></code>.)
+	
+      <p>
+	<code>sonify(iris, sonaes(time = Petal.Length, pitch = Petal.Width))</code>
+      <p>
+	The first argument is the <code>data.frame</code> to be
+	sonified and the second argument is the desired mappings of
+	sound parameters to data
+	parameters. Here, <code>Petal.Length</code> is mapped to
+	time and <code>Petal.Width</code> is mapped to pitch. Now,
+	here's the sound that generates:
+      <p>
+	<object height="81" width="100%"> <param name="movie" value="http://player.soundcloud.com/player.swf?url=http%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F19229007"></param> <param name="allowscriptaccess" value="always"></param> <embed allowscriptaccess="always" height="81" src="http://player.soundcloud.com/player.swf?url=http%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F19229007" type="application/x-shockwave-flash" width="100%"></embed> </object>
+      <p>
+	<a href=gettingstarted.html#Top>Back to top<a>
+	    <p>
+	      <a name="Tweaking"></a><h3>Tweaking and Interacting with <code>sonify</code> Objects</h3>
+		  <p>
+		    The <code>sonify</code> function creates an object
+		    of class <code>"sonify"</code> that you can assign to an object:
+		  <p>
+		    <code>x <- sonify(iris, sonaes(Petal.Length, Petal.Width))</code>
+			       <p>
+The first thing you might want to do is see how <code>x</code> is set up, with:
+<p>
+<code>summary(x)</code>
+<p>
+This is the output from that command:
+<p>
+<pre>
+Summary of sonify object 'x':
+
+The data to be sonified:
+ $dataname 
+ iris 
+
+Matchup of sonic values to data columns or constants:
+       $mapping           Column or Value
+--------------------------------------------
+        $time              Petal.Length
+        $pitch             Petal.Width
+        $dur               2
+        $vol               1
+        $pan               0.5
+        $tempo             NULL
+        $timbre            sine 
+
+Desired min/max for sonic parameters:
+       $scales           Min      Max
+--------------------------------------------
+        $time             0       5
+        $pitch            8       9
+        $dur              0.25    4
+        $vol              0.2     1
+        $pan              0       1
+        $tempo            120     240
+        $timbre           NULL    NULL
+</pre>
+<p>
+We see a lot of default values that we did not manually set. For
+instance, the time range of the sonification is set to 0 through 5
+seconds, and the pitch between what <code>playitbyr</code> calls 8, or
+middle C, and 9, an octave above (this is
+<a href=http://www.csounds.com/manual/html/cpsoct.html>Csound's 'oct'
+notation</a>). These defaults and parameters are documented in more
+detail in the help pages
+for <code><a href="help/sonaes.html">sonaes()</a></code>
+and <a href="help/sonscaling.html"><code>sonscaling()</code></a>.
+<p>
+To actually hear a sonify object, you just type its name at the
+command prompt. You can also change parameters by adding them on. In
+this case, the fact that the sonification is so short (5 seconds) and
+the pitch range is so small (1 octave), we're losing a lot of the
+finer detail as well as a sense of how many points there actually
+are. Some of this is because we're rendering to sine tones--I'm
+working on broadening the sound palette
+for <code>playitby</code> <i>posthaste</i>!--but we can make the
+situation a little better by lengthening the sonification to 10 seconds and
+broadening the pitch range to 5 octaves:
+<p>
+<code> x + scale_time_linear(0, 10) + scale_pitch_linear(7, 12)</code>
+<p>
+This lets loose a veritable microtonal jug band of beeps:
+<p>
+<object height="81" width="100%"> <param name="movie" value="http://player.soundcloud.com/player.swf?url=http%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F19235134"></param> <param name="allowscriptaccess" value="always"></param> <embed allowscriptaccess="always" height="81" src="http://player.soundcloud.com/player.swf?url=http%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F19235134" type="application/x-shockwave-flash" width="100%"></embed> </object>
+<p>
+To save it to a file, you can save the last rendering created with:
+
+<code>saveLastRendering("myfile.wav")</code>
+
+You can also render a <code>sonify</code> object to
+an <code>audioSample</code> object with <code><a href=help/render.html>render()</code></a>, provided by the <code>audio</code>
+package, which also has functions to save the file. To do this all in
+one command, you can use:
+<p>
+<code>save.wave(render(x), "myfile.wav")</code>
+<p>
+Happy sonifying, and don't be afraid to reach out for <a href=support.html>support and love</a>!
+<p>
+	<a href=gettingstarted.html#Top>Back to top<a>

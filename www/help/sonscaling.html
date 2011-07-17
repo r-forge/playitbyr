@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Setting scales for 'sonify' objects</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="../../R.css">
+</head><body>
+
+<table width="100%" summary="page for sonscaling {playitbyr}"><tr><td>sonscaling {playitbyr}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Setting scales for <code>sonify</code> objects</h2>
+
+<h3>Description</h3>
+
+<p>
+<code>sonscaling()</code> is invoked in the call to <code>sonify</code> or added onto
+it in order to specify precisely how the data parameters are mapped
+onto sonic parameters. Currently, only continuous scales are
+supported.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+sonscaling(time = list(0, 5, linear.scale),
+           pitch = list(8, 9, linear.scale),
+           dur = list(0.25, 4, linear.scale),
+           vol = list(0.2, 1, linear.scale),
+           pan= list(0, 1, linear.scale),
+           tempo = list(120, 240, linear.scale),
+           timbre = NULL)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>time</code></td>
+<td>
+The desired start
+time mapping of all events (in seconds). A list with three elements:
+the minimum time, maximum time, and the scaling function.</td></tr>
+</p>
+<p>
+<tr valign="top"><td><code>pitch</code></td>
+<td>
+The desired pitch mapping of all events, represented
+such that 8 represents middle C, 9 represents the octave above,
+etc. (This is
+<a href="http://www.csounds.com/manual/html/cpsoct.html">Csound's
+&lsquo;oct&rsquo; notation</a>. A list with three elements: the minimum
+pitch, maximum pitch, and the scaling function.)</td></tr>
+</p>
+<p>
+<tr valign="top"><td><code>dur</code></td>
+<td>
+The desired duration mapping (in seconds). A list with
+three elements: the minimum duration, the maximum duration, and the
+scaling function.</td></tr>
+</p>
+<p>
+<tr valign="top"><td><code>vol</code></td>
+<td>
+The desired volume mapping as a number between 0, silence,
+and 1, the maximum possible amplitude. A list with three elements:
+the minimum volume, the maximum volume, and the scaling function.</td></tr>
+</p>
+<p>
+<tr valign="top"><td><code>pan</code></td>
+<td>
+The desired mapping for balance
+between left and right stereo channels, where 0 is all the left
+channel, 0.5 balanced, and 1 all the right. A list with three
+elements: the minimum pan, the maximum pan, and the scaling
+function.</td></tr>
+</p>
+<p>
+<tr valign="top"><td><code>tempo</code></td>
+<td>
+The desired tempo mapping (in beats per minute). A list
+with three elements: the minimum tempo, the maximum tempo, and the
+scaling function.</td></tr>
+</p>
+<p>
+<tr valign="top"><td><code>timbre</code></td>
+<td>
+Ignored. Currently no mappings are supported for this timbre</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>
+</p>
+<p>
+Each argument of <code>sonscaling</code> is in the form of a list, where the
+first element is the minimum value of the sonic parameter, the second
+is the maximum, and the third is a function that maps the data column
+onto the range of the sonic parameter. The only such function included
+with <span class="pkg">playitbyr</span> right now is <code><a href="../../playitbyr/help/linear.scale">linear.scale</a></code> but users
+can write their own function for this purpose. User-defined scaling
+functions need to be of the same form as <code><a href="../../playitbyr/help/linear.scale">linear.scale</a></code>,
+i.e. it must have arguments for the input vector <code>x</code>, and the
+<code>min</code> and <code>max</code>.
+</p>
+<p>
+</p>
+
+
+<h3>See Also</h3>
+
+<p>
+<code><a href="../../playitbyr/help/sonify">sonify</a></code> where this is eventually used;
+<code><a href="../../playitbyr/help/sonaes">sonaes</a></code> for defining the which data columns get mapped
+onto these sonic parameters; <code><a href="../../playitbyr/help/scaleShortcuts">scaleShortcuts</a></code> for easy
+shortcut functions for common use-cases of scaling; and
+<code><a href="../../playitbyr/help/linear.scale">linear.scale</a></code> for an example of a scaling function.
+</p>
+
+<hr><div align=center>[Package <em>playitbyr</em> version 0.1-1 <a href=00Index.html>Index</a> <a href=../index.html>Web site</a>]</div>
