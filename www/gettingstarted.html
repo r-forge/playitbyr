@@ -26,25 +26,24 @@
 <p>
   <a name="Installation"></a><h3>Installation</h3>
 <p>
-  To get <code>playitbyr</code>, just open R and type:
+  <code>playitbyr</code> is now on
+  <a href=http://cran.r-project.org>CRAN</a>! So now you can just open
+  R and type:
 <p>
-  <code>install.packages("playitbyr", dep=TRUE, repos="http://r-forge.r-project.org")</code>
+  <code>install.packages("playitbyr")</code>
 <p>
-  This package has been submitted to
-  <a href=http://cran.r-project.org>CRAN</a> and will be available
-  soon from your favorite CRAN repository, whether it be in Iowa or
-  Indonesia.
+  to install and get going.
 <p>
   <b>Note for Linux users.</b> Unfortunately,
   the <code><a href=http://www.rforge.net/audio/>audio</a></code>
-package, which actually plays the sounds created
-by <code>playitbyr</code>, doesn't have strong support
-for Linux. <code>playitbyr</code> therefore by default renders
-sound to a temporary file on Linux installations
-(using <code>audio</code>'s <code>save.wave</code>
-function) and then plays that temporary file
-with <a href="http://oreilly.com/linux/command-directory/cmd.csp?path=a/aplay">aplay</a>. See
-<a href=help/getplayer.html>the help page
+  package, which actually plays the sounds created
+  by <code>playitbyr</code>, doesn't have strong support for
+  Linux. <code>playitbyr</code> therefore by default renders sound to
+  a temporary file on Linux installations
+  (using <code>audio</code>'s <code>save.wave</code> function) and
+  then plays that temporary file
+  with <a href="http://oreilly.com/linux/command-directory/cmd.csp?path=a/aplay">aplay</a>. See
+  <a href=help/getplayer.html>the help page
   for <code>setPlayer()</code></a> for more information.
 <p>
   <a href=gettingstarted.html#Top>Back to top<a>
