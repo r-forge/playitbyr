@@ -2,9 +2,10 @@
 ## making changes to the source and reloads it into R. It assumes that your
 ## working directory is the parent directory of playitbyr
 ##
-## WARNING: ?detach says 'detaching and re-attaching a package may not
+## Warning: ?detach says 'detaching and re-attaching a package may not
 ## refresh some or all components of the package, and is inadvisable.'
-## In practice I've found that this works so far with playitbyr.
+## In practice I've found that this works just fine with playitbyr;
+## the problems listed in ?detach mostly have to do with graphics devices.
 ## 
 ## If wanted for quick testing of .R files and not wanting to do a
 ## formal package load, try either:
@@ -17,6 +18,10 @@
 ## sourceDirectory("playitbyr/R/", modifiedOnly=TRUE)
 ##
 ## (courtesy Hadley Wickam and Henrik Bengtsson, respectively)
+##
+## However, this will not load any changes to the shapeDef files
+## themselves.
+
 
 if("package:playitbyr" %in% search())
   detach("package:playitbyr", unload=TRUE)
